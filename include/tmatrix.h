@@ -8,7 +8,7 @@
 #define __TDynamicMatrix_H__
 
 #include <iostream>
-
+#include<assert.h>
 using namespace std;
 
 const int MAX_VECTOR_SIZE = 100000000;
@@ -45,7 +45,7 @@ public:
   TDynamicVector(TDynamicVector&& v) noexcept
   {
       this->pMem = nullptr;
-      swap(*this, v);
+      swaps(*this, v);
   }
   ~TDynamicVector()
   {
@@ -53,16 +53,16 @@ public:
   }
   TDynamicVector& operator=(const TDynamicVector& v)
   {
-      if (this != &v)
+      if (this == &v)
           return *this;
   
       if (this->sz != v.sz)
       {
           TDynamicVector temp(v);
-          swap(*this, temp);
+          swaps(*this, temp);
           return *this;
       }
-       
+
       for (int i = 0; i < this->sz; i++)
           this->pMem[i] = v.pMem[i];
 
@@ -71,7 +71,7 @@ public:
 
   TDynamicVector& operator=(TDynamicVector&& v) noexcept
   {
-      swap(*this, v);
+      swaps(*this, v);
       return *this;
   }
 
@@ -123,7 +123,7 @@ public:
   {
       TDynamicVector temp(*this);
       for (int i = 0; i < temp.sz; i++)
-        temp.pMem += val;
+        temp.pMem[i] += val;
 
       return temp;
   }
@@ -131,7 +131,7 @@ public:
   {
       TDynamicVector temp(*this);
       for (int i = 0; i < temp.sz; i++)
-          temp.pMem -= val;
+          temp.pMem[i] -= val;
 
       return temp;
   }
@@ -158,15 +158,18 @@ public:
   TDynamicVector operator-(const TDynamicVector& v)
   {
       if (this->sz != v.sz)
-          throw invalid_argumet("Vectors must have equal sizes");
+          throw invalid_argument("Vectors must have equal sizes");
 
       TDynamicVector temp(*this);
       for (int i = 0; i < temp.sz; i++)
           temp.pMem[i] -= v.pMem[i];
       return temp;
   }
-  T operator*(const TDynamicVector& v) noexcept(noexcept(T()))
+  T operator*(const TDynamicVector& v) // ? noexcept(noexcept(T()))
   {
+      if (this->sz != v.sz)
+          throw invalid_argument("Vectors must have equal sizes");
+
       T result = static_cast<T>(0);
 
       for (int i = 0; i < this->sz; i++)
@@ -175,7 +178,7 @@ public:
       return result;
   }
 
-  friend void swap(TDynamicVector& lhs, TDynamicVector& rhs) noexcept
+  friend void swaps(TDynamicVector& lhs, TDynamicVector& rhs) noexcept
   {
     std::swap(lhs.sz, rhs.sz);
     std::swap(lhs.pMem, rhs.pMem);
@@ -262,8 +265,9 @@ public:
   {
       TDynamicMatrix temp(this->sz);
       for (int i = 0; i < temp.sz; i++)
-          for (int j = 0; j < temp.sz; j++)
-            temp.pMem[i][j] += this->pMem[i] * m.pMem[j];
+          for (int k = 0; k < tem.sz; k++)
+              for (int j = 0; j < temp.sz; j++)
+                  temp.pMem[i][j] += this->pMem[i][k] * m.pMem[k][j];
 
       return temp;
   }
