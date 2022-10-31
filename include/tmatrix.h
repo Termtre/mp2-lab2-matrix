@@ -217,17 +217,25 @@ public:
   }
 
   using TDynamicVector<TDynamicVector<T>>::operator[];
+  using TDynamicVector<TDynamicVector<T>>::size;// реализация для тестов
+  // реализация для тестов
+  T& at(size_t ind1, size_t ind2)
+  {
+      if ((ind1 < 0) || (ind2 < 0) || (ind1 >= sz) || (ind2 >= sz))
+          throw out_of_range("Elements index must be greater or equal than zero or less than size of vector");
 
-  // сравнение
+      return pMem[ind1][ind2];
+  }
+
   bool operator==(const TDynamicMatrix& m) const noexcept
   {
       return TDynamicVector<TDynamicVector<T>>::operator==(m);
   }
 
   // матрично-скалярные операции
-  TDynamicVector<T> operator*(const T& val)
+  TDynamicMatrix<T> operator*(const T& val)
   {
-      TDynamicMatrix temp(this->sz);
+      TDynamicMatrix<T> temp(this->sz);
       for (int i = 0; i < temp.sz; i++)
           temp.pMem[i] = this->pMem[i] * val;
 
@@ -237,9 +245,11 @@ public:
   // матрично-векторные операции
   TDynamicVector<T> operator*(const TDynamicVector<T>& v)
   {
-      TDynamicMatrix temp(this->sz);
-      for (int i = 0; i < temp.sz; i++)
-          temp.pMem[i] = this->pMem[i] * v;
+      if (this->size() != v.size())
+          throw out_of_range("Vector and matrix must have equal sizes");
+      TDynamicVector<T> temp(this->sz);
+      for (int i = 0; i < temp.size(); i++)
+          temp[i] = this->pMem[i] * v;
 
       return temp;
   }
@@ -263,9 +273,11 @@ public:
   }
   TDynamicMatrix operator*(const TDynamicMatrix& m)
   {
+      if (this->size() != m.size())
+          throw out_of_range("Matrixes must have equal sizes");
       TDynamicMatrix temp(this->sz);
       for (int i = 0; i < temp.sz; i++)
-          for (int k = 0; k < tem.sz; k++)
+          for (int k = 0; k < temp.sz; k++)
               for (int j = 0; j < temp.sz; j++)
                   temp.pMem[i][j] += this->pMem[i][k] * m.pMem[k][j];
 
@@ -277,10 +289,7 @@ public:
   {
       for (int i = 0; i < v.sz; i++)
           for (int j = 0; j < v.sz; j++)
-          {
-              std::cout << "Enter " << i << " row, " << j << "column: ";
               istr >> v.pMem[i][j];
-          }
 
       return istr;
   }
