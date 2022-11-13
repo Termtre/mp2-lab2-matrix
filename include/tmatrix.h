@@ -32,7 +32,7 @@ public:
   }
   TDynamicVector(T* arr, size_t s) : sz(s)
   {
-    if ((sz == 0) || (sz > MAX_VECTOR_SIZE))
+    if ((sz <= 0) || (sz > MAX_VECTOR_SIZE))
         throw invalid_argument("Array size should be greater than zero. Also sz must be <= MAX_VECTOR_SIZE for test");
 
     assert(arr != nullptr && "TDynamicVector ctor requires non-nullptr arg");
@@ -75,9 +75,10 @@ public:
 
   TDynamicVector& operator=(TDynamicVector&& v) noexcept
   {
+      delete[] this->pMem;
+      this->pMem = nullptr;
+      this->sz = 0;
       swaps(*this, v);
-      delete[] v.pMem;
-      v.pMem = nullptr;
       return *this;
   }
 
