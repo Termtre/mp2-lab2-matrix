@@ -40,13 +40,11 @@ TEST(TDynamicMatrix, copied_matrix_is_equal_to_source_one)
 TEST(TDynamicMatrix, copied_matrix_has_its_own_memory)
 {
     TDynamicMatrix<int> m1(2);
-    m1[0][0] = 1;
-    m1[0][1] = 2;
-    m1[1][0] = 3;
-    m1[1][1] = 4;
-    ASSERT_NO_THROW(TDynamicMatrix<int> m2(m1));
+    TDynamicMatrix<int> test(2);
     TDynamicMatrix<int> m2(m1);
-    EXPECT_EQ(m2, m1);
+    m2[0][0] = 1; m2[0][1] = 2;
+    m2[1][0] = 3; m2[1][1] = 4;
+    EXPECT_EQ(test, m1);
 }
 
 TEST(TDynamicMatrix, can_get_size)

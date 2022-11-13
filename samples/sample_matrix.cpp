@@ -5,138 +5,165 @@
 // Тестирование матриц
 
 #include <iostream>
+#include <ctime>
 #include "tmatrix.h"
 //---------------------------------------------------------------------------
-
-void ready_test()
+template<class T>
+void random_matrix(TDynamicMatrix<T>& temp)
 {
-    TDynamicMatrix<int> a(5), b(5), c(5);
-    int i, j;
-    for (i = 0; i < 5; i++)
-        for (j = i; j < 5; j++)
-        {
-            a[i][j] = i * 10 + j;
-            b[i][j] = (i * 10 + j) * 100;
-        }
-
-    cout << "Matrix a = " << endl << a << endl;
-    cout << "Matrix b = " << endl << b << endl;
-
-    c = a + b;
-    cout << "Matrix c = a + b" << endl << c << endl;
-    c = a - b;
-    cout << "Matrix c = a - b" << endl << c << endl;
-    c = a * b;
-    cout << "Matrix c = a * b" << endl << c << endl;
+    srand(time(NULL) + rand());
+    for (int i = 0; i < temp.size(); i++)
+        for (int j = 0; j < temp.size(); j++)
+            temp[i][j] = static_cast<T>(-14.532132) + static_cast<T> (rand()) / (static_cast <T> (RAND_MAX / static_cast<T>(54.05489 + 14.532132)));
 }
 
 template<class T>
-void input(TDynamicMatrix<T> a)
+void random_vector(TDynamicVector<T>& temp)
 {
-    TDynamicMatrix<T> b(a.size());
-    TDynamicMatrix<T> c(a.size());
-
-    cout << "Введите матрицу а:" << endl;
-    cin >> a;
-    cout << "Введите матрицу b:" << endl;
-    cin >> b;
-
-    cout << "Matrix a = " << endl << a << endl;
-    cout << "Matrix b = " << endl << b << endl;
-
-    c = a + b;
-    cout << "Matrix c = a + b" << endl << c << endl;
-    c = a - b;
-    cout << "Matrix c = a - b" << endl << c << endl;
-    c = a * b;
-    cout << "Matrix c = a * b" << endl << c << endl;
+    srand(time(NULL) + rand());
+    for (int i = 0; i < temp.size(); i++)
+        temp[i] = static_cast<T>(-124.532132) + static_cast<T> (rand()) / (static_cast <T> (RAND_MAX / static_cast<T>(154.05489 + 124.532132)));
 }
-
-void test()
+void ready_test(int type_gen)
 {
-    while (1)
+    int st1 = 1, choice = 0, size;
+    double scalar = 0.0;
+    while (st1)
     {
-        size_t size;
-        int choice;
-        cout << "Чтобы выйти - нажмите любую клавишу" << endl;
-        cout << "Введите размер матрицы: ";
-        cin >> size;
-        cout << endl << "Выберите тип данных шаблона: 1) int, 2) long int 3) long long int 4) float 5) double 6) long double" << endl;
-        cout << "Чтобы выйти - нажмите любую клавишу" << endl;
-        cout << "Ваш выбор: ";
-        cin >> choice;
-        cout << endl;
+        int st2 = 1;
 
-        switch (choice)
+        if (type_gen == 1)
+            cout << endl << "//ВЫБРАНА СЛУЧАЙНАЯ ГЕНЕРАЦИЯ\\\\" << endl;
+        else
+            cout << endl << "//ВЫБРАН РУЧНОЙ ВВОД\\\\" << endl;
+
+        cout << "Чтобы выйти - введите отрицательное число " << endl;
+        cout << "Введите размер матриц: ";
+        cin >> size;
+        cout << endl << endl;
+
+        if (size < 1)
         {
-        case 1:
-        {   
-            TDynamicMatrix<int> a(size);
-            input<int>(a);
-            break;
+            st1 = 0;
+            continue;
         }
-        case 2:
+
+        TDynamicMatrix<double> a(size);
+        TDynamicMatrix<double> b(size);
+        TDynamicMatrix<double> c(size);
+        TDynamicVector<double> v(size);
+        TDynamicVector<double> tmp(size);
+
+        if (type_gen == 1)
         {
-            TDynamicMatrix<long int> a(size);
-            input<long int>(a);
-            break;
+            random_matrix<double>(a);
+            random_matrix<double>(b);
+            random_vector<double>(tmp);
+            cout << endl << endl;
         }
-        case 3:
+
+        else
         {
-            TDynamicMatrix<long long int> a(size);
-            input<long long int>(a);
-            break;
+            cout << "Введите матрицу а:" << endl;
+            cin >> a;
+            cout << endl << "Введите матрицу b:" << endl;
+            cin >> b;
+            cout << endl << "Введите вектор tmp:" << endl;
+            cin >> tmp;
+            cout << endl;
         }
-        case 4:
+
+        while (st2)
         {
-            TDynamicMatrix<float> a(size);
-            input<float>(a);
-            break;
-        }
-        case 5:
-        {
-            TDynamicMatrix<double> a(size);
-            input<double>(a);
-            break;
-        }
-        case 6:
-        {
-            TDynamicMatrix<long double> a(size);
-            input<long double>(a);
-            break; 
-        }
-        default:
-            break;
+            cout << "Выберите операцию над матрицами:\n";
+            cout << "1) Сложение\n2) Разность\n3) Умножение\n4) Умножение на скаляр\n5) Умножение на вектор" << endl;
+            cout << "Чтобы выйти - нажмите любую другую клавишу." << endl;
+            cout << "Ваш выбор: ";
+            cin >> choice;
+
+            string operation = "";
+
+            switch (choice)
+            {
+            case 1:
+            {
+                c = a + b;
+                operation = "c = a + b";
+                break;
+            }   
+            case 2:
+            {    
+                c = a - b;
+                operation = "c = a - b";
+                break;
+            }
+            case 3:
+            {    
+                c = a * b;
+                operation = "c = a * b";
+                break;
+            }
+            case 4:
+            {    
+                cout << endl << "Введите скаляр: ";
+                cin >> scalar;
+                c = a * scalar;
+                operation = "c = a * scalar";
+                break;
+            }
+            case 5:
+            {
+                v = a * tmp;
+                operation = "v = a * tmp";
+                break;
+            }
+            default:
+            {
+                st2 = 0;
+                break;
+            }
+            }
+
+            if (st2 == 0)
+                continue;
+
+            cout << endl << "Матрица а:\n" << a << endl;
+            if ((choice != 4) && (choice != 5))
+                cout << "Матрица b:\n" << b << endl;
+            if (choice != 5)
+                cout << "Матрица " << operation << ":\n" << c << endl;
+            if (choice == 5)
+            {
+                cout << "Вектор tmp:\n" << tmp << endl;
+                cout << endl << "Вектор " << operation << ":\n" << v << endl;
+            }
+
+            cout << endl << endl;
+
         }
     }
 }
 
 void main()
 {
-  setlocale(LC_ALL, "Russian");
-  cout << "ТЕСТИРОВАНИЕ РАБОТЫ С МАТРИЦАМИ" << endl << endl;
-  int choice, st = 1;
+    setlocale(LC_ALL, "Russian");
+    cout << "ТЕСТИРОВАНИЕ РАБОТЫ МАТРИЦ" << endl << endl;
+    int st = 1, choice = 0;
 
-  while (st)
-  {
-      cout << "Выберите способ тестирования: 1) Готовый тест 2) Свой пример" << endl;
-      cout << "Чтобы закончить - нажмите любую другую клавишу" << endl;
-      cout << "Ваш выбор: ";
-      cin >> choice;
-      cout << endl;
+    while (st)
+    {
+        cout << "Выберите способ тестирования: 1) Случайные значения 2) Свой пример" << endl;
+        cout << "Чтобы закончить - нажмите любую другую клавишу" << endl;
+        cout << "Ваш выбор: ";
+        cin >> choice;
+        cout << endl;
+        
+        if ((choice == 1) || (choice == 2))
+            ready_test(choice);
+        else
+            st = 0;
+    }
 
-      switch (choice)
-      {
-      case 1:
-          ready_test();
-          break;
-      case 2:
-          test();
-          break;
-      default:
-          st = 0;
-          break;
-      }
-  }
 }
-//---------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------

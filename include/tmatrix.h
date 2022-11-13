@@ -25,12 +25,16 @@ protected:
 public:
   TDynamicVector(size_t size = 1) : sz(size)
   {
-    if ((sz == 0) || (sz > MAX_VECTOR_SIZE))
+    if ((sz <= 0) || (sz > MAX_VECTOR_SIZE))
       throw invalid_argument("Vector size should be greater than zero. Also sz must be <= MAX_VECTOR_SIZE for test");
+
     pMem = new T[sz]();// {}; // У типа T д.б. констуктор по умолчанию
   }
   TDynamicVector(T* arr, size_t s) : sz(s)
   {
+    if ((sz == 0) || (sz > MAX_VECTOR_SIZE))
+        throw invalid_argument("Array size should be greater than zero. Also sz must be <= MAX_VECTOR_SIZE for test");
+
     assert(arr != nullptr && "TDynamicVector ctor requires non-nullptr arg");
     pMem = new T[sz];
     std::copy(arr, arr + sz, pMem);
@@ -72,6 +76,8 @@ public:
   TDynamicVector& operator=(TDynamicVector&& v) noexcept
   {
       swaps(*this, v);
+      delete[] v.pMem;
+      v.pMem = nullptr;
       return *this;
   }
 
@@ -119,7 +125,7 @@ public:
   }
 
   // скалярные операции
-  TDynamicVector operator+(T val)
+  TDynamicVector operator+(T val) noexcept(noexcept(T()))
   {
       TDynamicVector temp(*this);
       for (int i = 0; i < temp.sz; i++)
@@ -127,7 +133,7 @@ public:
 
       return temp;
   }
-  TDynamicVector operator-(T val)
+  TDynamicVector operator-(T val) noexcept(noexcept(T()))
   {
       TDynamicVector temp(*this);
       for (int i = 0; i < temp.sz; i++)
@@ -135,7 +141,7 @@ public:
 
       return temp;
   }
-  TDynamicVector operator*(T val)
+  TDynamicVector operator*(T val) noexcept(noexcept(T()))
   {
       TDynamicVector temp(*this);
       for (int i = 0; i < temp.sz; i++)
@@ -165,7 +171,7 @@ public:
           temp.pMem[i] -= v.pMem[i];
       return temp;
   }
-  T operator*(const TDynamicVector& v) // ? noexcept(noexcept(T()))
+  T operator*(const TDynamicVector& v)
   {
       if (this->sz != v.sz)
           throw invalid_argument("Vectors must have equal sizes");
@@ -257,6 +263,9 @@ public:
   // матрично-матричные операции
   TDynamicMatrix operator+(const TDynamicMatrix& m)
   {
+      if (this->size() != m.size())
+          throw out_of_range("Matrixes must have equal sizes");
+
       TDynamicMatrix temp(this->sz);
       for (int i = 0; i < temp.sz; i++)
           temp.pMem[i] = this->pMem[i] + m.pMem[i];
@@ -265,6 +274,9 @@ public:
   }
   TDynamicMatrix operator-(const TDynamicMatrix& m)
   {
+      if (this->size() != m.size())
+          throw out_of_range("Matrixes must have equal sizes");
+
       TDynamicMatrix temp(this->sz);
       for (int i = 0; i < temp.sz; i++)
           temp.pMem[i] = this->pMem[i] - m.pMem[i];

@@ -45,12 +45,12 @@ TEST(TDynamicVector, copied_vector_is_equal_to_source_one)
 
 TEST(TDynamicVector, copied_vector_has_its_own_memory)
 {
-    double array[5] = {1, 2, 3, 4, 5};
-    ASSERT_NO_THROW(TDynamicVector<double> v(array, 5););
-    TDynamicVector<double> v(array, 5);
-    ASSERT_NO_THROW(TDynamicVector<double> v1(v););
-    TDynamicVector<double> v1(v);
-    EXPECT_EQ(true, v1 == v);
+    TDynamicVector<int> v1(2);
+    TDynamicVector<int> test(2);
+    TDynamicVector<int> v2(v1);
+    v2[0] = 1;
+    v2[1] = 1;
+    EXPECT_EQ(v1, test);
 }
 
 TEST(TDynamicVector, can_get_size)
